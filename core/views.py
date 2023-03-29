@@ -35,3 +35,21 @@ def check_profile(request):
     else:
         return redirect('logout')
 
+@login_required
+def admin_main(request):
+    profiles = Profile.objects.get(user_id = request.user.id)
+    if profiles.group_id != 1 and profiles.group_id != 2:
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la')
+        return redirect('check_group_main')
+    template_name : 'administrator/admin_main.html'
+    return render (request,template_name,{'profiles':profiles})
+
+@login_required
+def users_main(request):
+    profiles = Profile.objects.get(user_id = request.user.id)
+    if profiles.group_ide != 1 and profiles.group_id != 2:
+        messages.add_message(request, messages.INFO, 'Intenta ingresar a una area para la que no tiene')
+        return redirect('check_group_main')
+    groups = Group.objects.all().exclude(pk=0).order_by('id')
+    template_name = 'administrator/users_main.html'
+    return render(request,template_name,{'groups':groups,'profiles':profiles}) 
